@@ -16,9 +16,10 @@ names available in the CircuitPython version of usb.core:
 The full PyUSB version has more classes and methods, but those extra things
 won't transfer over to CircuitPython, so I'm ignoring them.
 """
-from usb import core
-from time import sleep
 from struct import unpack
+from sys import stdout
+from time import sleep
+from usb import core
 
 
 # Button bitmask constants
@@ -70,7 +71,7 @@ def start_xpad(device):
     # Start polling for input events
     prev = None
     while True:
-        sleep(0.05)  # aim for about 20 Hz
+        sleep(0.025)  # aim for about 30 Hz (allow 8 ms for 2 endpoint reads)
         # First read after a not having polled for a while will usually give
         # a "[Errno 75] Overflow" exception, but a second read immediately
         # after the error response should normally work. It seems like each
@@ -81,26 +82,50 @@ def start_xpad(device):
             print(device.read(0x81, 64))
         except core.USBError as e:
             pass
-        try:
-            data = device.read(0x81, 64)  # type is array.array('B')
-            if data != prev:
-                if (len(data) != 20) or (data[0] != 0) or (data[1] != 0x14):
-                    # Skip unexpected responses
-                    print(' '.join(['%02x' % b for b in data]))
-                    continue
-                # Unpack normal responses
-                prev = data
-                (btn, L2, R2, LX, LY, RX, RY) = unpack('<HBBhhhh', data[2:14])
-                print("(%6d,%6d)  (%6d,%6d) " % (LX, LY, RX, RY),
-                    decode(btn, L2, R2))
-                # Stop if home button pressed
-                if btn & BTN['Home']:
-                    return
-        except core.USBError as e:
-            print(e)
-            if e.errno == 19:
-                # 19 = "No such device (it may have been disconnected)"
-                return
+        data = device.read(0x81, 64)  # type is array.array('B')
+        if data != prev:
+            if (len(data) != 20) or (data[0] != 0) or (data[1] != 0x14):
+                # Skip unexpected responses
+                print(' '.join(['%02x' % b for b in data]))
+                continue
+            # Unpack normal responses
+            prev = data
+            (btn, L2, R2, LX, LY, RX, RY) = unpack('<HBBhhhh', data[2:14])
+            print("(%6d,%6d)  (%6d,%6d) " % (LX, LY, RX, RY),
+                decode(btn, L2, R2))
+            # Stop if home button pressed
+            if btn & BTN['Home']:
+                return {"stop": True, "lost": False}
+
+def find_and_connect():
+    """Attempt to establish a gamepad connection"""
+    print("Looking for USB gamepads...")
+    while True:
+        gamepad = core.find(idVendor=0x045e, idProduct=0x028e)
+        if gamepad:
+            print("\nFound an XInput gamepad (045e:028e)...")
+            sleep(1)  # Wait briefly to let adapter and USB bus settle
+            try:
+                return start_xpad(gamepad)
+            except core.USBError as e:
+                if e.errno == 19:
+                    # 19 = "No such device (it may have been disconnected)"
+                    print("[Gamepad disconnected]")
+                else:
+                    print(e)
+                return {"stop": False, "lost": True}
+        else:
+            # If no gamepads are connected, retry at 5 s intervals
+            print(".", end='')
+            stdout.flush()
+            sleep(5)
+
+# Establish and maintain a gamepad connection
+state = {"stop": False, "lost": False}
+while not state["stop"]:
+    state = find_and_connect()
+    if state["lost"]:
+        sleep(1)  # Let USB bus settle for a bit after a lost connection
 
 """
 Mapping of controls to response bytes:
@@ -131,14 +156,3 @@ RX R  0014  0000  00  00  0000 0000  ff0e
 RY U  0014  0000  00  00  0000 0000  ff7f ff11
 RY D  0014  0000  00  00  0000 0000  ff7f 00fa
 """
-
-print("Looking for USB gamepads...")
-idle_adapter = core.find(idVendor=0x2dc8, idProduct=0x3107)
-gamepad = core.find(idVendor=0x045e, idProduct=0x028e)
-if idle_adapter:
-    print("\nFound an 8BitDo Adapter in idle mode (2dc8:3107)")
-if gamepad:
-    print("\nFound an XInput gamepad (045e:028e)")
-    start_xpad(gamepad)
-else:
-    print("\nIt seems no gamepads are currently connected")
