@@ -68,23 +68,30 @@ def start_xpad(device):
     except core.USBError:
         print("setting configuration")
         device.set_configuration()
+    # Sometimes initial reads give old data, so try to drain gamepad's buffer
+    for _ in range(8):
+        try:
+            _ = device.read(0x81, 64)
+        except core.USBError as e:
+            if e.errno != 75:
+                raise e
     # Start polling for input events
     prev = None
     while True:
         sleep(0.025)  # aim for about 30 Hz (allow 8 ms for 2 endpoint reads)
-        # First read after a not having polled for a while will usually give
-        # a "[Errno 75] Overflow" exception, but a second read immediately
-        # after the error response should normally work. It seems like each
-        # read triggers an input scan by the controller which needs about 4 ms
-        # to do all its ADC stuff and whatever. Also, those input scans seem
-        # to expire if you don't do another read soon enough.
+        # For 8BitDo USB Wireless Adapter, first read after not having polled
+        # for a while will usually give a "[Errno 75] Overflow" exception. But,
+        # a second read immediately after the error response should normally
+        # work. For other gamepads (e.g. non-wireless), the first read may
+        # return a sucessful response.
         try:
-            print(device.read(0x81, 64))
+            data = device.read(0x81, 64)  # type is array.array('B')
         except core.USBError as e:
-            pass
-        data = device.read(0x81, 64)  # type is array.array('B')
+            if e.errno != 75:
+                raise e
+            data = device.read(0x81, 64)
         if data != prev:
-            if (len(data) != 20) or (data[0] != 0) or (data[1] != 0x14):
+            if len(data) < 14:
                 # Skip unexpected responses
                 print(' '.join(['%02x' % b for b in data]))
                 continue
