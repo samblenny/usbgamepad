@@ -21,7 +21,44 @@ from time import sleep
 from struct import unpack
 
 
+# Button bitmask constants
+BTN = {
+    'dUp':    0x0001,
+    'dDn':    0x0002,
+    'dL':     0x0004,
+    'dR':     0x0008,
+    'Start':  0x0010,
+    'Select': 0x0020,
+    'LHat':   0x0040,
+    'RHat':   0x0080,
+    'L':      0x0100,
+    'R':      0x0200,
+    'Home':   0x0400,
+    'B':      0x1000,
+    'A':      0x2000,
+    'Y':      0x4000,
+    'X':      0x8000,
+    }
+
+def decode(btn, L2, R2):
+    """Decode the button bitfield along with L2 and R2"""
+    names = []
+    for k in sorted(BTN):
+        v = BTN[k]
+        if btn & v:
+            names.append(k)
+    if L2:
+        names.append("L2")
+    if R2:
+        names.append("R2")
+    return " ".join(names)
+
+def stick(x, y):
+    """Format stick coordinates (each axis is 16-bit signed int)"""
+    return "(%6d,%6d)" % (x, y)
+
 def start_xpad(device):
+    """Initialize ggamepad and poll for input changes, print updates"""
     interface = 0
     # Tell the linux kernel to let go of this gamepad so we can use it
     if device.is_kernel_driver_active(interface):
@@ -37,7 +74,7 @@ def start_xpad(device):
     # Start polling for input events
     prev = None
     while True:
-        sleep(0.030)  # aim for about 30 Hz
+        sleep(0.05)  # aim for about 20 Hz
         # First read after a not having polled for a while will usually give
         # a "[Errno 75] Overflow" exception, but a second read immediately
         # after the error response should normally work. It seems like each
@@ -51,13 +88,24 @@ def start_xpad(device):
         try:
             data = device.read(0x81, 64)  # type is array.array('B')
             if data != prev:
-                print(' '.join(['%02x' % b for b in data]))
+                if (len(data) != 20) or (data[0] != 0) or (data[1] != 0x14):
+                    # Skip unexpected responses
+                    print(' '.join(['%02x' % b for b in data]))
+                    continue
+                # Unpack normal responses
                 prev = data
-            # Stop if home button pressed
-            if data[3] & 0x04 != 0:
-                return
+                (btn, L2, R2, LX, LY, RX, RY) = unpack('<HBBhhhh', data[2:14])
+                print("(%6d,%6d)  (%6d,%6d) " % (LX, LY, RX, RY),
+                    decode(btn, L2, R2))
+                # Stop if home button pressed
+                if btn & BTN['Home']:
+                    return
         except core.USBError as e:
             print(e)
+            if e.errno == 19:
+                # 19 = "No such device (it may have been disconnected)"
+                return
+
 
 """
 Mapping of controls to response bytes:
