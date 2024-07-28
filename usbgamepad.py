@@ -53,10 +53,6 @@ def decode(btn, L2, R2):
         names.append("R2")
     return " ".join(names)
 
-def stick(x, y):
-    """Format stick coordinates (each axis is 16-bit signed int)"""
-    return "(%6d,%6d)" % (x, y)
-
 def start_xpad(device):
     """Initialize ggamepad and poll for input changes, print updates"""
     interface = 0
@@ -105,7 +101,6 @@ def start_xpad(device):
             if e.errno == 19:
                 # 19 = "No such device (it may have been disconnected)"
                 return
-
 
 """
 Mapping of controls to response bytes:
