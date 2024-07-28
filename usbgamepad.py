@@ -5,7 +5,7 @@ usb-gamepad
 
 Interesting vendor:product IDs:
   045e:028e  XInput Gamepad (*many* gamepads and adapters match this)
-  2dc8:3107  8BitDo 8BitDo USB Wireless Adapter 2 (idle, no connection)
+  2dc8:3107  8BitDo USB Wireless Adapter 2 (idle, no connection)
 
 The 8BitDo adapter switches vendor and product IDs when it has a connection
 to a Bluetooth gamepad. When idle, it presents as 2dc8:3107. When connected,
