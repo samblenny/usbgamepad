@@ -76,7 +76,7 @@ def start_xpad(device):
         # a "[Errno 75] Overflow" exception, but a second read immediately
         # after the error response should normally work. It seems like each
         # read triggers an input scan by the controller which needs about 4 ms
-        # to do all it's ADC stuff and whatever. Also, those input scans seem
+        # to do all its ADC stuff and whatever. Also, those input scans seem
         # to expire if you don't do another read soon enough.
         try:
             print(device.read(0x81, 64))
