@@ -33,6 +33,60 @@ To avoid the sudo above, the solution would be to add a udev rule to grant r/w
 permissions based on USB vendor and product ID.
 
 
+## Example Output
+
+```
+$ sudo make run
+python3 usbgamepad.py
+Looking for USB gamepads...
+
+Found an XInput gamepad (045e:028e)...
+configuration already set
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  dUp
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  dUp
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  dDn
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  dDn
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  dL
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  dR
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  dL
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  dR
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  B
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  A
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  Start
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  Select
+(     0,     0)  (     0,     0)
+( -9472,     0)  (     0,     0)
+(-32768, 10240)  (     0,     0)
+(-25856, 22528)  (     0,     0)
+( 10496, 32256)  (     0,     0)
+( 31744, 10240)  (     0,     0)
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,-32768)
+(     0,     0)  ( -3584,-32768)
+(     0,     0)  (-24320,-23808)
+(     0,     0)  (-30464, 18688)
+(     0,     0)  ( -8192, 32767)
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  L R L2 R2
+(     0,     0)  (     0,     0)  L L2
+(     0,     0)  (     0,     0)  L2
+(     0,     0)  (     0,     0)
+(     0,     0)  (     0,     0)  Home
+```
+
+
 ## References
 
 - https://github.com/pyusb/pyusb
