@@ -20,7 +20,7 @@ from usb import core
 
 
 # This calls usb.core.find() in a way that only works correctly if you have
-# just one connected gamepad (for more, it needs a find_all=1 argument)
+# just one connected gamepad (for more, it needs a find_all=True argument)
 print("Looking for USB gamepads...")
 idle_adapter = core.find(idVendor=0x2dc8, idProduct=0x3107)
 gamepad = core.find(idVendor=0x045e, idProduct=0x028e)
