@@ -55,7 +55,7 @@ def decode(btn, L2, R2):
     return " ".join(names)
 
 def start_xpad(device):
-    """Initialize ggamepad and poll for input changes, print updates"""
+    """Initialize gamepad and poll for input changes, print updates"""
     interface = 0
     # Tell the linux kernel to let go of this gamepad so we can use it
     if device.is_kernel_driver_active(interface):
