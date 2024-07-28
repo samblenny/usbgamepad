@@ -13,7 +13,8 @@ back end.
 ## Hardware
 
 - PC running Debian Bookworm
-- USB gamepad ([XInput](https://en.wikipedia.org/wiki/DirectInput#XInput))
+- USB gamepad ([XInput](https://en.wikipedia.org/wiki/DirectInput#XInput),
+  045e:028e)
 
 
 ## Install PyUSB on Debian Bookworm
