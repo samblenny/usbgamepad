@@ -212,10 +212,10 @@ setting configuration
 (     0,     0)  (     0,     0)
 ```
 
-**NOTE: USB hot plugging may be unreliable. Based on my limited testing, seems
-like there may be bugs in my driver code or in the CircuitPython `max3421e`
-package. I got the best results when I plugged the gamepad in before powering
-up.**
+**NOTE: USB hot plugging may be unreliable. Based on my limited testing, it
+seems like there may be bugs in my driver code or in the CircuitPython
+`max3421e` package. I got the best results when I plugged the gamepad in before
+powering up.**
 
 If you press buttons and move the sticks, you should see additional output with
 decoded USB reports for gamepad events (XInput protocol) that like this:
