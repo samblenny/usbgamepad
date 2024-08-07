@@ -75,8 +75,7 @@ using the Adafruit USB Host BFF (MAX3421E) and a QT Py ESP32-S3 dev board.
 
 If you are unfamiliar with soldering stacking headers, you might want to read:
 
--
-[Adafruit Guide To Excellent Soldering](https://learn.adafruit.com/adafruit-guide-excellent-soldering/tools)
+- [Adafruit Guide To Excellent Soldering](https://learn.adafruit.com/adafruit-guide-excellent-soldering/tools)
 
 - [How To Solder Headers](https://learn.adafruit.com/how-to-solder-headers)
 
