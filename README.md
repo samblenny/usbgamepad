@@ -79,10 +79,10 @@ If you are unfamiliar with soldering stacking headers, you might want to read:
 
 - [How To Solder Headers](https://learn.adafruit.com/how-to-solder-headers)
 
-For this build, I included a microSD card BFF board that isn't used in
-`code.py` because it adds some mechanical stability. Also, I might want to use
-SD cards later. If you don't care about SD cards, adjust these instructions
-accordingly (you might want to select different headers).
+For this build, I included an otherwise unused microSD card BFF board because
+it adds some mechanical stability. Also, I might want to use SD cards later. If
+you don't care about SD cards, adjust these instructions accordingly (you might
+want to select different headers).
 
 
 ### Getting Ready
