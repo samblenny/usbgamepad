@@ -148,17 +148,18 @@ def main():
 
     # Cycle MAX3421E USB port power
     print("Resetting USB bus...")
+    # Turn off USB host port 5V power output
     usbEn = DigitalInOut(A0)
     usbEn.direction = Direction.OUTPUT
     usbEn.value = False
-    sleep(2)
-    usbEn.direction = Direction.INPUT
-    sleep(0.01)
-    print("Initializing MAX3421E...")
-    # Initialize USB
+    # Begin initializing MAX3421E USB host chip
     spi = SPI()
     usbHost = Max3421E(spi, chip_select=A1, irq=A2)
+    # Wait for 5V caps to discharge and MAX3421E to initialize
     sleep(2)
+    # Turn USB host port 5V power back on
+    usbEn.direction = Direction.INPUT
+    sleep(1.5)
     print("USB Host Ready")
 
     # MAIN EVENT LOOP
